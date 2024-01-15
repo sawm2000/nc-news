@@ -128,3 +128,57 @@ describe("/api/articles", () => {
       });
   });
 });
+describe("/api/articles/:article_id/comments", () => {
+  test("GET 200: should return an array of comments for a given article_id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(11);
+        response.body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.article_id).toBe("number");
+        });
+      });
+  });
+  test("GET 200: should return an array of comments for a given article_id - sorted by most recent first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        expect(response.body.comments[0]).toMatchObject({
+          comment_id: 5,
+          body: "I hate streaming noses",
+          article_id: 1,
+          author: "icellusedkars",
+          votes: 0,
+          created_at: "2020-11-03T21:00:00.000Z",
+        });
+      });
+  });
+
+  test("GET 404: should return 404 status code an error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/20/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("article does not exist");
+      });
+  });
+
+  test("GET 400: should return 400 status code an error message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/sabreen/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
+});
