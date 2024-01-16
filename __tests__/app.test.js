@@ -90,8 +90,8 @@ describe("/api/articles/:article_id", () => {
 
   test("PATCH 200: should increment votes property based on newVote object - increment", () => {
     const newVote = {
-       inc_votes : 3
-    }
+      inc_votes: 3,
+    };
     return request(app)
       .patch("/api/articles/1")
       .send(newVote)
@@ -99,15 +99,15 @@ describe("/api/articles/:article_id", () => {
       .then((response) => {
         expect(response.body.article).toMatchObject({
           article_id: 1,
-          votes: 103
-        })
+          votes: 103,
+        });
       });
   });
 
   test("PATCH 200: should increment votes property based on newVote object - decrement", () => {
     const newVote = {
-       inc_votes : -10
-    }
+      inc_votes: -10,
+    };
     return request(app)
       .patch("/api/articles/1")
       .send(newVote)
@@ -115,15 +115,15 @@ describe("/api/articles/:article_id", () => {
       .then((response) => {
         expect(response.body.article).toMatchObject({
           article_id: 1,
-          votes: 90
-        })
+          votes: 90,
+        });
       });
   });
 
   test("PATCH 404: should return 404 status code and error message when given a valid but non-existent article_id", () => {
     const newVote = {
-       inc_votes : 3
-    }
+      inc_votes: 3,
+    };
     return request(app)
       .patch("/api/articles/20")
       .send(newVote)
@@ -135,8 +135,8 @@ describe("/api/articles/:article_id", () => {
 
   test("PATCH 400: should return 400 status code and error message when given an invalid article_id", () => {
     const newVote = {
-       inc_votes : 3
-    }
+      inc_votes: 3,
+    };
     return request(app)
       .patch("/api/articles/sabreen")
       .send(newVote)
@@ -148,8 +148,8 @@ describe("/api/articles/:article_id", () => {
 
   test("PATCH 400: should return 400 status code and error message when patch request is missing required fields", () => {
     const newVote = {
-       inc_votes : null
-    }
+      inc_votes: null,
+    };
     return request(app)
       .patch("/api/articles/2")
       .send(newVote)
@@ -161,8 +161,8 @@ describe("/api/articles/:article_id", () => {
 
   test("PATCH 400: should return 400 status code and error message when patch request contains data with the wrong data type", () => {
     const newVote = {
-       inc_votes : "sabreen"
-    }
+      inc_votes: "sabreen",
+    };
     return request(app)
       .patch("/api/articles/2")
       .send(newVote)
@@ -171,7 +171,6 @@ describe("/api/articles/:article_id", () => {
         expect(response.body.message).toBe("Bad Request");
       });
   });
-
 });
 describe("/api/articles", () => {
   test("GET 200: should return an array of article objects", () => {
@@ -194,7 +193,7 @@ describe("/api/articles", () => {
         });
       });
   });
-  
+
   test("GET 200: should return an array of article objects - sorted by date in descending order.", () => {
     return request(app)
       .get("/api/articles")
@@ -232,7 +231,7 @@ describe("/api/articles/:article_id/comments", () => {
             author: expect.any(String),
             body: expect.any(String),
             article_id: expect.any(Number),
-          })
+          });
         });
       });
   });
@@ -368,5 +367,24 @@ describe("/api/articles/:article_id/comments", () => {
       .then((response) => {
         expect(response.body.message).toBe("Bad Request");
       });
+  });
+});
+
+describe("/api/comments/:comment_id", () => {
+  test("DELETE 204: deletes specified comment and sends no body back", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+
+
+  test("DELETE 404: should return 404 status code and error message when given a valid but non-existent comment_id", () => {
+    return request(app).delete("/api/comments/999").expect(404).then((response) => {
+      expect(response.body.message).toBe("Comment Does Not Exist");
+    });
+  });
+
+  test("DELETE 400: should return 400 status code and error message when given an invalid comment_id", () => {
+    return request(app).delete("/api/comments/sabreen").expect(400).then((response) => {
+      expect(response.body.message).toBe("Bad Request");
+    });
   });
 });
