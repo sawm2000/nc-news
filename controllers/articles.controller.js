@@ -6,14 +6,12 @@ exports.getArticleById = (req, res, next) => {
 
     selectArticleById(article_id).then((article)=>{
         res.status(200).send({article})
-    }).catch((err)=>{
-        next(err)
-    })
+    }).catch(next);
 }
 
 exports.getArticles = (req, res, next) => {
     selectArticles().then((articles)=>{
         res.status(200).send({articles})
-    })
+    }).catch(next);
 }
 

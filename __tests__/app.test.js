@@ -22,8 +22,10 @@ describe("/api/topics", () => {
       .then((response) => {
         expect(response.body.topics.length).toBe(3);
         response.body.topics.forEach((topic) => {
-          expect(typeof topic.slug).toBe("string");
-          expect(typeof topic.description).toBe("string");
+          expect(topic).toMatchObject({
+            slug: expect.any(String),
+            description: expect.any(String),
+          });
         });
       });
   });
@@ -62,10 +64,10 @@ describe("/api/articles/:article_id", () => {
           author: "butter_bridge",
           body: "I find this existence challenging",
           votes: 100,
+          created_at: expect.any(String),
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
-        expect(typeof response.body.article.created_at).toBe("string");
       });
   });
   test("GET 404: should return 404 status code an error message when given a valid but non-existent id", () => {
@@ -73,7 +75,7 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/20")
       .expect(404)
       .then((response) => {
-        expect(response.body.message).toBe("article does not exist");
+        expect(response.body.message).toBe("Article Does Not Exist");
       });
   });
 
@@ -94,18 +96,20 @@ describe("/api/articles", () => {
       .then((response) => {
         expect(response.body.articles.length).toBe(13);
         response.body.articles.forEach((article) => {
-          expect(typeof article.article_id).toBe("number");
-          expect(typeof article.author).toBe("string");
-          expect(typeof article.title).toBe("string");
-          expect(typeof article.topic).toBe("string");
-          expect(typeof article.created_at).toBe("string");
-          expect(typeof article.votes).toBe("number");
-          expect(typeof article.article_img_url).toBe("string");
-          expect(typeof article.comment_count).toBe("string");
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            title: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
         });
       });
   });
-
+  
   test("GET 200: should return an array of article objects - sorted by date in descending order.", () => {
     return request(app)
       .get("/api/articles")
@@ -136,15 +140,26 @@ describe("/api/articles/:article_id/comments", () => {
       .then((response) => {
         expect(response.body.comments.length).toBe(11);
         response.body.comments.forEach((comment) => {
-          expect(typeof comment.comment_id).toBe("number");
-          expect(typeof comment.votes).toBe("number");
-          expect(typeof comment.created_at).toBe("string");
-          expect(typeof comment.author).toBe("string");
-          expect(typeof comment.body).toBe("string");
-          expect(typeof comment.article_id).toBe("number");
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          })
         });
       });
   });
+  test("GET 200: should return an empty array when given an article with no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments).toEqual([]);
+      });
+  });
+
   test("GET 200: should return an array of comments for a given article_id - sorted by most recent first", () => {
     return request(app)
       .get("/api/articles/1/comments")
@@ -183,78 +198,90 @@ describe("/api/articles/:article_id/comments", () => {
   });
   test("POST 201: should post comments with body and username and return the posted comment", () => {
     const newComment = {
-    username: "butter_bridge",
-    body: "Charming",
-    };
-    return request(app)
-    .post("/api/articles/2/comments")
-    .send(newComment)
-    .expect(201)
-    .then((response) => {
-    expect(response.body.comment).toMatchObject({
-    comment_id: expect.any(Number),
-    body: "Charming",
-    article_id: 2,
-    author: "butter_bridge",
-    votes: 0,
-    created_at: expect.any(String),
-    });
-    });
-    });
-
-    test("POST 404: should return 404 status code and error message when given a valid but non-existent article_id ", () => {
-      const newComment = {
       username: "butter_bridge",
       body: "Charming",
-      };
-      return request(app)
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.comment).toMatchObject({
+          comment_id: expect.any(Number),
+          body: "Charming",
+          article_id: 2,
+          author: "butter_bridge",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+
+  test("POST 404: should return 404 status code and error message when given a valid but non-existent article_id ", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Charming",
+    };
+    return request(app)
       .post("/api/articles/20/comments")
       .send(newComment)
       .expect(404)
       .then((response) => {
-      expect(response.body.message).toBe("article_id Does Not Exist");
+        expect(response.body.message).toBe("article_id Does Not Exist");
       });
-      });
-      
-      test("POST 400: should return 400 status code and error message when post request is missing required fields - username", () => {
-      const newComment = {
+  });
+
+  test("POST 400: should return 400 status code and error message when given an invalid username", () => {
+    const newComment = {
+      username: "sabreen",
       body: "Charming",
-      };
-      return request(app)
+    };
+    return request(app)
       .post("/api/articles/2/comments")
       .send(newComment)
       .expect(400)
       .then((response) => {
-      expect(response.body.message).toBe("Missing Required Fields");
+        expect(response.body.message).toBe("Invalid Username");
       });
-      });
-      
-      test("POST 400: should return 400 status code and error message when post request is missing required fields - body", () => {
-        const newComment = {
-        username: "butter_bridge",
-        };
-        return request(app)
-        .post("/api/articles/2/comments")
-        .send(newComment)
-        .expect(400)
-        .then((response) => {
+  });
+
+  test("POST 400: should return 400 status code and error message when post request is missing required fields - username", () => {
+    const newComment = {
+      body: "Charming",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
         expect(response.body.message).toBe("Missing Required Fields");
-        });
-        });
-        
-        test("POST 400: should return 400 status code and error message when given invalid article_id", () => {
-        const newComment = {
-        username: "butter_bridge",
-        body: "Charming",
-        };
-        return request(app)
-        .post("/api/articles/sabreen/comments")
-        .send(newComment)
-        .expect(400)
-        .then((response) => {
+      });
+  });
+
+  test("POST 400: should return 400 status code and error message when post request is missing required fields - body", () => {
+    const newComment = {
+      username: "butter_bridge",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Missing Required Fields");
+      });
+  });
+
+  test("POST 400: should return 400 status code and error message when given invalid article_id", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Charming",
+    };
+    return request(app)
+      .post("/api/articles/sabreen/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
         expect(response.body.message).toBe("Bad Request");
-        });
-        });
-        });
-
-
+      });
+  });
+});

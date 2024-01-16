@@ -1,13 +1,11 @@
 const db = require("../db/connection")
+const {checkArticleExists} = require("../controllers/checkArticleExists")
 
 exports.selectComments = (article_id) => {
     return db
     .query("SELECT * FROM comments WHERE comments.article_id = $1 ORDER BY comments.created_at DESC;", [
       article_id,
     ]).then((result) => {
-        if (result.rows.length === 0) {
-          return Promise.reject({ status: 404, message: "Article Does Not Exist" });
-        }
         return result.rows;
       });
 }
@@ -20,8 +18,9 @@ exports.addComment = (article_id, newComment) =>{
   [username, body, article_id]
   ).then((result) => {
   if (result.rows.length === 0) {
-  return Promise.reject({ status: 404, message: "Article Does Not Exist" });
+    return Promise.reject({ status: 404, message: "Article Does Not Exist" });
   }
+ 
   return result.rows[0];
   });
   }
