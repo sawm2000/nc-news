@@ -10,7 +10,7 @@ exports.selectComments = (article_id) => {
       });
 }
 
-exports.addComment = (article_id, newComment) =>{
+exports.addComment = (article_id, newComment) => {
   const {username, body} = newComment
   return db
   .query(
@@ -24,3 +24,13 @@ exports.addComment = (article_id, newComment) =>{
   return result.rows[0];
   });
   }
+
+  exports.removeCommentById = (comment_id) => {
+    return db
+    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *;", [comment_id])
+    .then((result)=> {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, message: "Comment Does Not Exist" });
+      }
+    });
+    }
