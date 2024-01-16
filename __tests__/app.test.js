@@ -229,6 +229,41 @@ describe("/api/articles", () => {
         });
       });
   });
+
+  test("GET 200: should filter article objects based on topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(12);
+        response.body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            topic: "mitch",
+          });
+        });
+      });
+  });
+  test("GET 200: should return an empty array if topic with no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(0);
+        response.body.articles.forEach((article) => {
+          expect(article).toEqual([]);
+        });
+      });
+  });
+
+  test("GET 404: should return 404 status code and error message when given a valid but non-existent query", () => {
+    return request(app)
+      .get("/api/articles?topic=sabreen")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Topic Does Not Exist");
+      });
+  });
+
 });
 describe("/api/articles/:article_id/comments", () => {
   test("GET 200: should return an array of comments for a given article_id", () => {
