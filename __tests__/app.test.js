@@ -169,7 +169,7 @@ describe("/api/articles/:article_id/comments", () => {
       .get("/api/articles/20/comments")
       .expect(404)
       .then((response) => {
-        expect(response.body.message).toBe("article does not exist");
+        expect(response.body.message).toBe("Article Does Not Exist");
       });
   });
 
@@ -181,4 +181,80 @@ describe("/api/articles/:article_id/comments", () => {
         expect(response.body.message).toBe("Bad Request");
       });
   });
-});
+  test("POST 201: should post comments with body and username and return the posted comment", () => {
+    const newComment = {
+    username: "butter_bridge",
+    body: "Charming",
+    };
+    return request(app)
+    .post("/api/articles/2/comments")
+    .send(newComment)
+    .expect(201)
+    .then((response) => {
+    expect(response.body.comment).toMatchObject({
+    comment_id: expect.any(Number),
+    body: "Charming",
+    article_id: 2,
+    author: "butter_bridge",
+    votes: 0,
+    created_at: expect.any(String),
+    });
+    });
+    });
+
+    test("POST 404: should return 404 status code and error message when given a valid but non-existent article_id ", () => {
+      const newComment = {
+      username: "butter_bridge",
+      body: "Charming",
+      };
+      return request(app)
+      .post("/api/articles/20/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+      expect(response.body.message).toBe("article_id Does Not Exist");
+      });
+      });
+      
+      test("POST 400: should return 400 status code and error message when post request is missing required fields - username", () => {
+      const newComment = {
+      body: "Charming",
+      };
+      return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+      expect(response.body.message).toBe("Missing Required Fields");
+      });
+      });
+      
+      test("POST 400: should return 400 status code and error message when post request is missing required fields - body", () => {
+        const newComment = {
+        username: "butter_bridge",
+        };
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+        expect(response.body.message).toBe("Missing Required Fields");
+        });
+        });
+        
+        test("POST 400: should return 400 status code and error message when given invalid article_id", () => {
+        const newComment = {
+        username: "butter_bridge",
+        body: "Charming",
+        };
+        return request(app)
+        .post("/api/articles/sabreen/comments")
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+        });
+        });
+        });
+
+
