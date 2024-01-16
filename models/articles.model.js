@@ -27,3 +27,25 @@ exports.selectArticles = () => {
       return results.rows;
     });
 }
+
+exports.updateArticleById = (article_id, body) =>{
+  const {inc_votes} = body
+
+  if(!inc_votes){
+    return Promise.reject({ status: 400, message: "Invalid Patch Query" });
+  }
+
+  return db.query(
+    `
+    UPDATE articles
+  SET votes = votes + $1
+  WHERE article_id = ${article_id} 
+  RETURNING *`,
+      [inc_votes]
+  ).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, message: "Article Does Not Exist" });
+    }
+    return result.rows[0];
+  });
+}

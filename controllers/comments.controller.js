@@ -1,6 +1,6 @@
 const { selectComments, addComment } = require("../models/comments.model");
 
-const { checkArticleExists } = require("./checkArticleExists");
+const { checkArticleExists } = require("./utils/checkArticleExists");
 
 exports.getComments = (req, res, next) => {
   const { article_id } = req.params;

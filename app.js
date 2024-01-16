@@ -4,6 +4,7 @@ const { getTopics, getEndpoints } = require("./controllers/topics.controller");
 const {
   getArticleById,
   getArticles,
+  patchArticleById
 } = require("./controllers/articles.controller");
 
 const {
@@ -26,6 +27,8 @@ app.get("/api/articles/:article_id/comments", getComments);
 
 app.post("/api/articles/:article_id/comments", postComment);
 
+app.patch("/api/articles/:article_id", patchArticleById);
+
 app.use((err, req, res, next) => {
   if (err.status && err.message) {
     res.status(err.status).send({ message: err.message });
@@ -33,7 +36,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  if (err.code === "22P02") {
+  if (err.code === "22P02" || err.code === "42703") {
     res.status(400).send({ message: "Bad Request" });
   } else if (err.code === "23503") {
     if (err.constraint === "comments_article_id_fkey") {

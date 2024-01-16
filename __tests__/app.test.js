@@ -70,7 +70,7 @@ describe("/api/articles/:article_id", () => {
         });
       });
   });
-  test("GET 404: should return 404 status code an error message when given a valid but non-existent id", () => {
+  test("GET 404: should return 404 status code and error message when given a valid but non-existent id", () => {
     return request(app)
       .get("/api/articles/20")
       .expect(404)
@@ -79,7 +79,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
-  test("GET 400: should return 400 status code an error message when given an invalid id", () => {
+  test("GET 400: should return 400 status code and error message when given an invalid id", () => {
     return request(app)
       .get("/api/articles/sabreen")
       .expect(400)
@@ -87,6 +87,91 @@ describe("/api/articles/:article_id", () => {
         expect(response.body.message).toBe("Bad Request");
       });
   });
+
+  test("PATCH 200: should increment votes property based on newVote object - increment", () => {
+    const newVote = {
+       inc_votes : 3
+    }
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVote)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article).toMatchObject({
+          article_id: 1,
+          votes: 103
+        })
+      });
+  });
+
+  test("PATCH 200: should increment votes property based on newVote object - decrement", () => {
+    const newVote = {
+       inc_votes : -10
+    }
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVote)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article).toMatchObject({
+          article_id: 1,
+          votes: 90
+        })
+      });
+  });
+
+  test("PATCH 404: should return 404 status code and error message when given a valid but non-existent article_id", () => {
+    const newVote = {
+       inc_votes : 3
+    }
+    return request(app)
+      .patch("/api/articles/20")
+      .send(newVote)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Article Does Not Exist");
+      });
+  });
+
+  test("PATCH 400: should return 400 status code and error message when given an invalid article_id", () => {
+    const newVote = {
+       inc_votes : 3
+    }
+    return request(app)
+      .patch("/api/articles/sabreen")
+      .send(newVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
+
+  test("PATCH 400: should return 400 status code and error message when patch request is missing required fields", () => {
+    const newVote = {
+       inc_votes : null
+    }
+    return request(app)
+      .patch("/api/articles/2")
+      .send(newVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid Patch Query");
+      });
+  });
+
+  test("PATCH 400: should return 400 status code and error message when patch request contains data with the wrong data type", () => {
+    const newVote = {
+       inc_votes : "sabreen"
+    }
+    return request(app)
+      .patch("/api/articles/2")
+      .send(newVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
+
 });
 describe("/api/articles", () => {
   test("GET 200: should return an array of article objects", () => {
@@ -179,7 +264,7 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 
-  test("GET 404: should return 404 status code an error message when given a valid but non-existent id", () => {
+  test("GET 404: should return 404 status code and error message when given a valid but non-existent id", () => {
     return request(app)
       .get("/api/articles/20/comments")
       .expect(404)
@@ -188,7 +273,7 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 
-  test("GET 400: should return 400 status code an error message when given an invalid id", () => {
+  test("GET 400: should return 400 status code and error message when given an invalid id", () => {
     return request(app)
       .get("/api/articles/sabreen/comments")
       .expect(400)

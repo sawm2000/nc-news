@@ -1,5 +1,5 @@
 const db = require("../db/connection")
-const {checkArticleExists} = require("../controllers/checkArticleExists")
+const {checkArticleExists} = require("../controllers/utils/checkArticleExists")
 
 exports.selectComments = (article_id) => {
     return db
