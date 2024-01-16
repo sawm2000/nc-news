@@ -120,6 +120,21 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
+  test("PATCH 200: should return original article if inc_votes is missing", () => {
+    const newVote = {
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVote)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article).toMatchObject({
+          article_id: 1,
+          votes: 100,
+        });
+      });
+  });
+
   test("PATCH 404: should return 404 status code and error message when given a valid but non-existent article_id", () => {
     const newVote = {
       inc_votes: 3,

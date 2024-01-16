@@ -31,6 +31,11 @@ exports.selectArticles = () => {
 exports.updateArticleById = (article_id, body) =>{
   const {inc_votes} = body
 
+  if(Object.keys(body).length === 0){
+    return db.query(`SELECT * FROM articles WHERE article_id = ${article_id} `).then((result)=>{
+      return result.rows[0];
+    })
+  }
   if(!inc_votes){
     return Promise.reject({ status: 400, message: "Invalid Patch Query" });
   }
