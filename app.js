@@ -13,6 +13,8 @@ const {
   deleteCommentById
 } = require("./controllers/comments.controller");
 
+const{getUsers} = require("./controllers/users.controller")
+
 const app = express();
 app.use(express.json());
 
@@ -31,6 +33,8 @@ app.post("/api/articles/:article_id/comments", postComment);
 app.patch("/api/articles/:article_id", patchArticleById);
 
 app.delete("/api/comments/:comment_id", deleteCommentById)
+
+app.get("/api/users", getUsers)
 
 app.use((err, req, res, next) => {
   if (err.status && err.message) {
