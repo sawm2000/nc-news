@@ -15,7 +15,7 @@ afterAll(() => {
 });
 
 describe("/api/topics", () => {
-  test("GET 200: should return an array of topic objects with slug and description property", () => {
+  test("GET 200: should return an array of topic objects with slug and description properties", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -121,8 +121,7 @@ describe("/api/articles/:article_id", () => {
   });
 
   test("PATCH 200: should return original article if inc_votes is missing", () => {
-    const newVote = {
-    };
+    const newVote = {};
     return request(app)
       .patch("/api/articles/1")
       .send(newVote)
@@ -390,16 +389,38 @@ describe("/api/comments/:comment_id", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
 
-
   test("DELETE 404: should return 404 status code and error message when given a valid but non-existent comment_id", () => {
-    return request(app).delete("/api/comments/999").expect(404).then((response) => {
-      expect(response.body.message).toBe("Comment Does Not Exist");
-    });
+    return request(app)
+      .delete("/api/comments/999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Comment Does Not Exist");
+      });
   });
 
   test("DELETE 400: should return 400 status code and error message when given an invalid comment_id", () => {
-    return request(app).delete("/api/comments/sabreen").expect(400).then((response) => {
-      expect(response.body.message).toBe("Bad Request");
-    });
+    return request(app)
+      .delete("/api/comments/sabreen")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
+});
+describe("/api/users", () => {
+  test("GET 200: should return an array of user objects with username, name and avatar_url properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.users.length).toBe(4);
+        response.body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
   });
 });
