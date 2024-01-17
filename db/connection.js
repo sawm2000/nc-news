@@ -11,7 +11,6 @@ require("dotenv").config({
 if (ENV === "production") {
   config.connectionString = process.env.DATABASE_URL
   config.max = 2;
-  console.log(process.env.DATABASE_URL)
 }
 
 if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
