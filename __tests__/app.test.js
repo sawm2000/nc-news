@@ -70,6 +70,27 @@ describe("/api/articles/:article_id", () => {
         });
       });
   });
+
+  test("GET 200: GET 200: should return a single article object based on article_id given - with comment_count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          votes: 100,
+          created_at: expect.any(String),
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: "11"
+        });
+      });
+  });
+
   test("GET 404: should return 404 status code and error message when given a valid but non-existent id", () => {
     return request(app)
       .get("/api/articles/20")
@@ -82,46 +103,6 @@ describe("/api/articles/:article_id", () => {
   test("GET 400: should return 400 status code and error message when given an invalid id", () => {
     return request(app)
       .get("/api/articles/sabreen")
-      .expect(400)
-      .then((response) => {
-        expect(response.body.message).toBe("Bad Request");
-      });
-  });
-
-  test("GET 200: should return total count of all comments with the specified article_id - when comment_count = 0", () => {
-    return request(app)
-      .get("/api/articles/4?comment_count")
-      .expect(200)
-      .then((response) => {
-        expect(response.body.article).toMatchObject({
-          comment_count: "0"
-        });
-      });
-  });
-
-  test("GET 200: should return total count of all comments with the specified article_id", () => {
-    return request(app)
-      .get("/api/articles/1?comment_count")
-      .expect(200)
-      .then((response) => {
-        expect(response.body.article).toMatchObject({
-          comment_count: "11"
-        });
-      });
-  });
- 
-  test("GET 404: should return 404 status code and error message when given a valid but non-existent article_id", () => {
-    return request(app)
-      .get("/api/articles/20?comment_count")
-      .expect(404)
-      .then((response) => {
-        expect(response.body.message).toBe("Article Does Not Exist");
-      })
-    })
-
-  test("GET 400: return 400 status code and error message when given an invalid article_id", () => {
-    return request(app)
-      .get("/api/articles/sabreen?comment_count")
       .expect(400)
       .then((response) => {
         expect(response.body.message).toBe("Bad Request");

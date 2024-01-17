@@ -7,13 +7,8 @@ const { checkTopicExists } = require("./utils/checkTopicExists");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  let comment_count = false
-
-  if(req.query.hasOwnProperty("comment_count")){
-    comment_count = true
-  }
-
-  selectArticleById(article_id, comment_count)
+  
+  selectArticleById(article_id)
     .then((article) => {
       res.status(200).send({ article });
     })
