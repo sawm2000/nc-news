@@ -88,6 +88,46 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
+  test("GET 200: should return total count of all comments with the specified article_id - when comment_count = 0", () => {
+    return request(app)
+      .get("/api/articles/4?comment_count")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article).toMatchObject({
+          comment_count: "0"
+        });
+      });
+  });
+
+  test("GET 200: should return total count of all comments with the specified article_id", () => {
+    return request(app)
+      .get("/api/articles/1?comment_count")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article).toMatchObject({
+          comment_count: "11"
+        });
+      });
+  });
+ 
+  test("GET 404: should return 404 status code and error message when given a valid but non-existent article_id", () => {
+    return request(app)
+      .get("/api/articles/20?comment_count")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Article Does Not Exist");
+      })
+    })
+
+  test("GET 400: return 400 status code and error message when given an invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/sabreen?comment_count")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
+
   test("PATCH 200: should increment votes property based on newVote object - increment", () => {
     const newVote = {
       inc_votes: 3,
