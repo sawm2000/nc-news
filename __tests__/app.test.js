@@ -31,6 +31,15 @@ describe("/api/topics", () => {
   });
 });
 describe("/api", () => {
+  test("GET 404: should return 404 status code and error message when trying to connect to an endpoint that does not exist", () => {
+    return request(app)
+      .get("/api/sabreen")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Endpoint Not Found");
+      });
+  });
+
   test("GET 200: should return an object describing all the available endpoints on your API", () => {
     return request(app)
       .get("/api")
