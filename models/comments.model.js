@@ -34,3 +34,30 @@ exports.addComment = (article_id, newComment) => {
       }
     });
     }
+
+  exports.updateCommentById = (comment_id, body) =>{
+    const {inc_votes} = body
+
+  if(Object.keys(body).length === 0){
+    return db.query(`SELECT * FROM comments WHERE comment_id = ${comment_id} `).then((result)=>{
+      return result.rows[0];
+    })
+  }
+  if(!inc_votes){
+    return Promise.reject({ status: 400, message: "Invalid Patch Query" });
+  }
+
+  return db.query(
+    `
+    UPDATE comments
+  SET votes = votes + $1
+  WHERE comment_id = ${comment_id} 
+  RETURNING *`,
+      [inc_votes]
+  ).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, message: "Comment Does Not Exist" });
+    }
+    return result.rows[0];
+  });
+  }

@@ -545,6 +545,107 @@ describe("/api/comments/:comment_id", () => {
         expect(response.body.message).toBe("Bad Request");
       });
   });
+////////////////////
+
+test("PATCH 200: should increment votes property based on newVote object - increment", () => {
+  const newVote = {
+    inc_votes: 3,
+  };
+  return request(app)
+    .patch("/api/comments/1")
+    .send(newVote)
+    .expect(200)
+    .then((response) => {
+      expect(response.body.comment).toMatchObject({
+        comment_id: 1,
+        votes: 19,
+      });
+    });
+});
+
+test("PATCH 200: should increment votes property based on newVote object - decrement", () => {
+  const newVote = {
+    inc_votes: -10,
+  };
+  return request(app)
+    .patch("/api/comments/1")
+    .send(newVote)
+    .expect(200)
+    .then((response) => {
+      expect(response.body.comment).toMatchObject({
+        comment_id: 1,
+        votes: 6,
+      });
+    });
+});
+
+test("PATCH 200: should return original article if inc_votes is missing", () => {
+  const newVote = {};
+  return request(app)
+    .patch("/api/comments/1")
+    .send(newVote)
+    .expect(200)
+    .then((response) => {
+      expect(response.body.comment).toMatchObject({
+        comment_id: 1,
+        votes: 16,
+      });
+    });
+});
+
+test("PATCH 404: should return 404 status code and error message when given a valid but non-existent comment_id", () => {
+  const newVote = {
+    inc_votes: 3,
+  };
+  return request(app)
+    .patch("/api/comments/999")
+    .send(newVote)
+    .expect(404)
+    .then((response) => {
+      expect(response.body.message).toBe("Comment Does Not Exist");
+    });
+});
+
+test("PATCH 400: should return 400 status code and error message when given an invalid comment_id", () => {
+  const newVote = {
+    inc_votes: 3,
+  };
+  return request(app)
+    .patch("/api/comments/sabreen")
+    .send(newVote)
+    .expect(400)
+    .then((response) => {
+      expect(response.body.message).toBe("Bad Request");
+    });
+});
+
+test("PATCH 400: should return 400 status code and error message when patch request is missing required fields", () => {
+  const newVote = {
+    inc_votes: null,
+  };
+  return request(app)
+    .patch("/api/comments/2")
+    .send(newVote)
+    .expect(400)
+    .then((response) => {
+      expect(response.body.message).toBe("Invalid Patch Query");
+    });
+});
+
+test("PATCH 400: should return 400 status code and error message when patch request contains data with the wrong data type", () => {
+  const newVote = {
+    inc_votes: "sabreen",
+  };
+  return request(app)
+    .patch("/api/comments/2")
+    .send(newVote)
+    .expect(400)
+    .then((response) => {
+      expect(response.body.message).toBe("Bad Request");
+    });
+});
+
+
 });
 describe("/api/users", () => {
   test("GET 200: should return an array of user objects with username, name and avatar_url properties", () => {
