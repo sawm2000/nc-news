@@ -364,9 +364,158 @@ describe("/api/articles", () => {
       .get("/api/articles?order=sabreen")
       .expect(404)
       .then((response) => {
-        expect(response.body.message).toBe("Invalid order Query")
+        expect(response.body.message).toBe("Invalid order Query");
       });
   });
+  ///////////////////////////
+
+  test("POST 201: should post article with author, title, body, topic and article_img_url ans return the posted comment", () => {
+    const newArticle = {
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.article).toMatchObject({
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          created_at: expect.any(String),
+          votes: 0,
+          article_id: expect.any(Number),
+          comment_count: expect.any(String),
+        });
+      });
+  });
+
+  test("POST 201: should post article with author, title, body, topic and article_img_url ans return the posted comment - no article_url given", () => {
+    const newArticle = {
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging"
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.article).toMatchObject({
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          article_img_url:"https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          created_at: expect.any(String),
+          votes: 0,
+          article_id: expect.any(Number),
+          comment_count: expect.any(String),
+        });
+      });
+  });
+
+  test("POST 400: should return 400 status code and error message when given an invalid author", () => {
+     const newArticle = {
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "sabreen",
+      body: "I find this existence challenging"
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid Author");
+      });
+  });
+
+  test("POST 400: should return 400 status code and error message when given an invalid topic", () => {
+    const newArticle = {
+     title: "Living in the shadow of a great man",
+     topic: "sabreen",
+     author: "butter_bridge",
+     body: "I find this existence challenging"
+   };
+   return request(app)
+     .post("/api/articles")
+     .send(newArticle)
+     .expect(400)
+     .then((response) => {
+       expect(response.body.message).toBe("Invalid Topic");
+     });
+ });
+
+  test("POST 400: should return 400 status code and error message when post request is missing required fields - author", () => {
+    const newArticle = {
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      body: "I find this existence challenging"
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Missing Required Fields");
+      });
+  });
+
+  test("POST 400: should return 400 status code and error message when post request is missing required fields - body", () => {
+    const newArticle = {
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Missing Required Fields");
+      });
+  });
+
+  test("POST 400: should return 400 status code and error message when post request is missing required fields - title", () => {
+    const newArticle = {
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging"
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Missing Required Fields");
+      });
+  });
+
+  test("POST 400: should return 400 status code and error message when post request is missing required fields - topic", () => {
+    const newArticle = {
+      title: "Living in the shadow of a great man",
+      author: "butter_bridge",
+      body: "I find this existence challenging"
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Missing Required Fields");
+      });
+  });
+
 });
 
 describe("/api/articles/:article_id/comments", () => {
@@ -545,107 +694,104 @@ describe("/api/comments/:comment_id", () => {
         expect(response.body.message).toBe("Bad Request");
       });
   });
-////////////////////
 
-test("PATCH 200: should increment votes property based on newVote object - increment", () => {
-  const newVote = {
-    inc_votes: 3,
-  };
-  return request(app)
-    .patch("/api/comments/1")
-    .send(newVote)
-    .expect(200)
-    .then((response) => {
-      expect(response.body.comment).toMatchObject({
-        comment_id: 1,
-        votes: 19,
+  test("PATCH 200: should increment votes property based on newVote object - increment", () => {
+    const newVote = {
+      inc_votes: 3,
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVote)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comment).toMatchObject({
+          comment_id: 1,
+          votes: 19,
+        });
       });
-    });
-});
+  });
 
-test("PATCH 200: should increment votes property based on newVote object - decrement", () => {
-  const newVote = {
-    inc_votes: -10,
-  };
-  return request(app)
-    .patch("/api/comments/1")
-    .send(newVote)
-    .expect(200)
-    .then((response) => {
-      expect(response.body.comment).toMatchObject({
-        comment_id: 1,
-        votes: 6,
+  test("PATCH 200: should increment votes property based on newVote object - decrement", () => {
+    const newVote = {
+      inc_votes: -10,
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVote)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comment).toMatchObject({
+          comment_id: 1,
+          votes: 6,
+        });
       });
-    });
-});
+  });
 
-test("PATCH 200: should return original article if inc_votes is missing", () => {
-  const newVote = {};
-  return request(app)
-    .patch("/api/comments/1")
-    .send(newVote)
-    .expect(200)
-    .then((response) => {
-      expect(response.body.comment).toMatchObject({
-        comment_id: 1,
-        votes: 16,
+  test("PATCH 200: should return original article if inc_votes is missing", () => {
+    const newVote = {};
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVote)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comment).toMatchObject({
+          comment_id: 1,
+          votes: 16,
+        });
       });
-    });
-});
+  });
 
-test("PATCH 404: should return 404 status code and error message when given a valid but non-existent comment_id", () => {
-  const newVote = {
-    inc_votes: 3,
-  };
-  return request(app)
-    .patch("/api/comments/999")
-    .send(newVote)
-    .expect(404)
-    .then((response) => {
-      expect(response.body.message).toBe("Comment Does Not Exist");
-    });
-});
+  test("PATCH 404: should return 404 status code and error message when given a valid but non-existent comment_id", () => {
+    const newVote = {
+      inc_votes: 3,
+    };
+    return request(app)
+      .patch("/api/comments/999")
+      .send(newVote)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Comment Does Not Exist");
+      });
+  });
 
-test("PATCH 400: should return 400 status code and error message when given an invalid comment_id", () => {
-  const newVote = {
-    inc_votes: 3,
-  };
-  return request(app)
-    .patch("/api/comments/sabreen")
-    .send(newVote)
-    .expect(400)
-    .then((response) => {
-      expect(response.body.message).toBe("Bad Request");
-    });
-});
+  test("PATCH 400: should return 400 status code and error message when given an invalid comment_id", () => {
+    const newVote = {
+      inc_votes: 3,
+    };
+    return request(app)
+      .patch("/api/comments/sabreen")
+      .send(newVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
 
-test("PATCH 400: should return 400 status code and error message when patch request is missing required fields", () => {
-  const newVote = {
-    inc_votes: null,
-  };
-  return request(app)
-    .patch("/api/comments/2")
-    .send(newVote)
-    .expect(400)
-    .then((response) => {
-      expect(response.body.message).toBe("Invalid Patch Query");
-    });
-});
+  test("PATCH 400: should return 400 status code and error message when patch request is missing required fields", () => {
+    const newVote = {
+      inc_votes: null,
+    };
+    return request(app)
+      .patch("/api/comments/2")
+      .send(newVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid Patch Query");
+      });
+  });
 
-test("PATCH 400: should return 400 status code and error message when patch request contains data with the wrong data type", () => {
-  const newVote = {
-    inc_votes: "sabreen",
-  };
-  return request(app)
-    .patch("/api/comments/2")
-    .send(newVote)
-    .expect(400)
-    .then((response) => {
-      expect(response.body.message).toBe("Bad Request");
-    });
-});
-
-
+  test("PATCH 400: should return 400 status code and error message when patch request contains data with the wrong data type", () => {
+    const newVote = {
+      inc_votes: "sabreen",
+    };
+    return request(app)
+      .patch("/api/comments/2")
+      .send(newVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
 });
 describe("/api/users", () => {
   test("GET 200: should return an array of user objects with username, name and avatar_url properties", () => {
@@ -670,11 +816,11 @@ describe("/api/users/:username", () => {
       .get("/api/users/butter_bridge")
       .expect(200)
       .then((response) => {
-          expect(response.body.user).toMatchObject({
-            username: 'butter_bridge',
-            name: 'jonny',
-            avatar_url:'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
-        
+        expect(response.body.user).toMatchObject({
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
         });
       });
   });
@@ -685,5 +831,5 @@ describe("/api/users/:username", () => {
       .then((response) => {
         expect(response.body.message).toBe("User Does Not Exist");
       });
-      });
   });
+});

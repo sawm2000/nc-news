@@ -74,3 +74,32 @@ exports.updateArticleById = (article_id, body) =>{
     return result.rows[0];
   });
 }
+
+exports.addArticle = (newArticle) => {
+  const {author, title, body, topic, article_img_url} = newArticle
+  
+  let queryString = `INSERT INTO articles (author, title, body, topic`
+  const queryParams = [author, title, body, topic]
+
+  if(article_img_url){
+    queryString += ` , article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING *;`
+    queryParams.push(article_img_url)
+  }else{
+    queryString += `) VALUES ($1, $2, $3, $4) RETURNING *;`
+  }
+  
+  return db
+  .query(queryString, queryParams
+  ).then((result)=>{
+    return db
+    .query(
+      `SELECT articles.*, 
+    COUNT(comments.comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id`,[result.rows[0].article_id])
+  }).then((result)=>{
+    return result.rows[0];
+  })
+  }

@@ -1,20 +1,22 @@
 const express = require("express");
+
 const { getTopics, getEndpoints } = require("./controllers/topics.controller");
 
 const {
   getArticleById,
   getArticles,
-  patchArticleById
+  patchArticleById,
+  postArticles,
 } = require("./controllers/articles.controller");
 
 const {
   getComments,
   postComment,
   deleteCommentById,
-  patchCommentsById
+  patchCommentsById,
 } = require("./controllers/comments.controller");
 
-const{getUsers, getByUsername} = require("./controllers/users.controller")
+const { getUsers, getByUsername } = require("./controllers/users.controller");
 
 const app = express();
 app.use(express.json());
@@ -33,18 +35,19 @@ app.post("/api/articles/:article_id/comments", postComment);
 
 app.patch("/api/articles/:article_id", patchArticleById);
 
-app.delete("/api/comments/:comment_id", deleteCommentById)
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
-app.get("/api/users", getUsers)
+app.get("/api/users", getUsers);
 
-app.get("/api/users/:username", getByUsername)
+app.get("/api/users/:username", getByUsername);
 
-app.patch("/api/comments/:comment_id", patchCommentsById)
+app.patch("/api/comments/:comment_id", patchCommentsById);
 
+app.post("/api/articles", postArticles);
 
-app.all(`*`, (req, res) =>{
-  res.status(404).send({message: "Endpoint Not Found"})
-})
+app.all(`*`, (req, res) => {
+  res.status(404).send({ message: "Endpoint Not Found" });
+});
 
 app.use((err, req, res, next) => {
   if (err.status && err.message) {
@@ -60,12 +63,16 @@ app.use((err, req, res, next) => {
       res.status(404).send({ message: "article_id Does Not Exist" });
     } else if (err.constraint === "comments_author_fkey") {
       res.status(400).send({ message: "Invalid Username" });
-    }
+    }else if (err.constraint === "articles_topic_fkey") {
+      res.status(400).send({ message: "Invalid Topic" });
+    }else if (err.constraint === "articles_author_fkey") {
+      res.status(400).send({ message: "Invalid Author" });
+    }else(console.log(err))
   } else if (err.code === "23502") {
     res.status(400).send({ message: "Missing Required Fields" });
   } else if (err.code === "42601") {
     res.status(404).send({ message: "Invalid order Query" });
-  }else next(err);
+  } else next(err);
 });
 
 app.use((err, req, res, next) => {

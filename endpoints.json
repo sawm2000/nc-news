@@ -15,6 +15,7 @@
     "exampleResponse": {
       "articles": [
         {
+          "article_id": 9,
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
           "author": "weegembump",
@@ -132,6 +133,24 @@
           "author": "butter_bridge",
           "article_id": 9,
          "created_at": 1586179020000
+        }
+      ]
+    }
+  },"POST /api/articles": {
+    "description": "posts a new article (author, body , title topic(article_img_url)) to a given article by article_id",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "article_id": 9,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "comment_count": 6,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
       ]
     }
