@@ -80,7 +80,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
-  test("GET 200: GET 200: should return a single article object based on article_id given - with comment_count", () => {
+  test("GET 200: should return a single article object based on article_id given - with comment_count", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -316,10 +316,10 @@ describe("/api/articles", () => {
         });
       });
   });
-  test("GET 400: should return 400 status code and error message when given a invalid sort query", () => {
+  test("GET 404: should return 404 status code and error message when given a invalid sort query", () => {
     return request(app)
       .get("/api/articles?sort_by=sabreen")
-      .expect(400)
+      .expect(404)
       .then((response) => {
         expect(response.body.message).toBe("Invalid sort_by Query");
       });
@@ -359,10 +359,10 @@ describe("/api/articles", () => {
         });
       });
   });
-  test("GET 400: should return 400 status code and error message when given a invalid order query", () => {
+  test("GET 404: should return 404 status code and error message when given a invalid order query", () => {
     return request(app)
       .get("/api/articles?order=sabreen")
-      .expect(400)
+      .expect(404)
       .then((response) => {
         expect(response.body.message).toBe("Invalid order Query")
       });
@@ -563,3 +563,26 @@ describe("/api/users", () => {
       });
   });
 });
+describe("/api/users/:username", () => {
+  test("GET 200: should return user objects with username, name and avatar_url properties", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then((response) => {
+          expect(response.body.user).toMatchObject({
+            username: 'butter_bridge',
+            name: 'jonny',
+            avatar_url:'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+        
+        });
+      });
+  });
+  test("GET 404: should return 404 status code and error message when given non-existent username", () => {
+    return request(app)
+      .get("/api/users/sabreen")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("User Does Not Exist");
+      });
+      });
+  });

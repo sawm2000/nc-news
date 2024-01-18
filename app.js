@@ -13,7 +13,7 @@ const {
   deleteCommentById
 } = require("./controllers/comments.controller");
 
-const{getUsers} = require("./controllers/users.controller")
+const{getUsers, getByUsername} = require("./controllers/users.controller")
 
 const app = express();
 app.use(express.json());
@@ -35,6 +35,8 @@ app.patch("/api/articles/:article_id", patchArticleById);
 app.delete("/api/comments/:comment_id", deleteCommentById)
 
 app.get("/api/users", getUsers)
+
+app.get("/api/users/:username", getByUsername)
 
 
 app.all(`*`, (req, res) =>{
@@ -59,7 +61,7 @@ app.use((err, req, res, next) => {
   } else if (err.code === "23502") {
     res.status(400).send({ message: "Missing Required Fields" });
   } else if (err.code === "42601") {
-    res.status(400).send({ message: "Invalid order Query" });
+    res.status(404).send({ message: "Invalid order Query" });
   }else next(err);
 });
 
