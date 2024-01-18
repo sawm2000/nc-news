@@ -95,7 +95,7 @@ describe("/api/articles/:article_id", () => {
           created_at: expect.any(String),
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          comment_count: "11"
+          comment_count: "11",
         });
       });
   });
@@ -294,7 +294,81 @@ describe("/api/articles", () => {
       });
   });
 
+  test("GET 200: should return articles sorted by created_at descending by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(13);
+        expect(response.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("GET 200: should return articles sorted by valid column - descending by default", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(13);
+        expect(response.body.articles).toBeSortedBy("article_id", {
+          descending: true,
+        });
+      });
+  });
+  test("GET 400: should return 400 status code and error message when given a invalid sort query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=sabreen")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid sort_by Query");
+      });
+  });
+
+  test("GET 200: should return articles sorted by given column descending by default", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(13);
+        expect(response.body.articles).toBeSortedBy("article_id", {
+          descending: true,
+        });
+      });
+  });
+
+  test("GET 200: should return articles sorted by given column descending by order specified", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=ASC")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(13);
+        expect(response.body.articles).toBeSortedBy("article_id", {
+          descending: false,
+        });
+      });
+  });
+  test("GET 200: should return articles sorted by created_at by default and in the order specified", () => {
+    return request(app)
+      .get("/api/articles?order=ASC")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(13);
+        expect(response.body.articles).toBeSortedBy("created_at", {
+          descending: false,
+        });
+      });
+  });
+  test("GET 400: should return 400 status code and error message when given a invalid order query", () => {
+    return request(app)
+      .get("/api/articles?order=sabreen")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid order Query")
+      });
+  });
 });
+
 describe("/api/articles/:article_id/comments", () => {
   test("GET 200: should return an array of comments for a given article_id", () => {
     return request(app)

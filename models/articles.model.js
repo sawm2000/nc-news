@@ -16,7 +16,13 @@ exports.selectArticleById = (article_id, ) =>{
 }
 
 
-exports.selectArticles = (topic) => {
+exports.selectArticles = (topic, sort_by="created_at", order="DESC") => {
+
+  const validQueries = ["created_at", "article_id", "title", "author", "votes", "comment_count"]
+
+  if(!validQueries.includes(sort_by)){
+    return Promise.reject({status: 400, message:"Invalid sort_by Query"})
+  }
 
 let queryString = `SELECT articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url ,
 COUNT(comments.comment_id) AS comment_count
@@ -32,7 +38,7 @@ if(topic){
 
 queryString += `
 GROUP BY articles.article_id
-ORDER BY articles.created_at DESC
+ORDER BY articles.${sort_by} ${order}
 ; `
 
     return db
