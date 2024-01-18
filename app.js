@@ -58,7 +58,9 @@ app.use((err, req, res, next) => {
     }
   } else if (err.code === "23502") {
     res.status(400).send({ message: "Missing Required Fields" });
-  } else next(err);
+  } else if (err.code === "42601") {
+    res.status(400).send({ message: "Invalid order Query" });
+  }else next(err);
 });
 
 app.use((err, req, res, next) => {
