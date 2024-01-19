@@ -137,10 +137,10 @@
       ]
     }
   },"POST /api/articles": {
-    "description": "posts a new article (author, body , title topic(article_img_url)) to a given article by article_id",
+    "description": "posts a new article (author, body , title topic(article_img_url))",
     "queries": [],
     "exampleResponse": {
-      "comments": [
+      "article": [
         {
           "article_id": 9,
           "title": "Seafood substitutions are increasing",
@@ -154,5 +154,24 @@
         }
       ]
     }
+  },
+  "POST /api/topics": {
+    "description": "posts a new topic (slug, (description))",
+    "queries": [],
+    "exampleResponse": {
+      "topic": [
+        {
+          "slug": "topic name",
+          "description": "description"
+          }
+      ]
+    }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes article by given article_id along with all associated comments",
+    "queries": [],
+    "exampleResponse": {
+    }
   }
+
 }

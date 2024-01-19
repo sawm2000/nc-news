@@ -259,6 +259,29 @@ describe("/api/articles/:article_id", () => {
         expect(response.body.message).toBe("Bad Request");
       });
   });
+
+  test("DELETE 204: deletes specified article and sends no body back", () => {
+    return request(app).delete("/api/articles/1").expect(204);
+  });
+
+  test("DELETE 404: should return 404 status code and error message when given a valid but non-existent article_id", () => {
+    return request(app)
+      .delete("/api/articles/999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Article Does Not Exist");
+      });
+  });
+
+  test("DELETE 400: should return 400 status code and error message when given an invalid article_id", () => {
+    return request(app)
+      .delete("/api/articles/sabreen")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad Request");
+      });
+  });
+
 });
 describe("/api/articles", () => {
   test("GET 200: should return an array of article objects", () => {

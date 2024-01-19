@@ -11,6 +11,7 @@ const {
   getArticles,
   patchArticleById,
   postArticles,
+  deleteArticleById,
 } = require("./controllers/articles.controller");
 
 const {
@@ -50,6 +51,10 @@ app.patch("/api/comments/:comment_id", patchCommentsById);
 app.post("/api/articles", postArticles);
 
 app.post("/api/topics", postTopics);
+
+app.delete("/api/articles/:article_id", deleteArticleById)
+
+
 
 app.all(`*`, (req, res) => {
   res.status(404).send({ message: "Endpoint Not Found" });
