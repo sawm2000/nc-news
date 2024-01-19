@@ -1,6 +1,10 @@
 const express = require("express");
 
-const { getTopics, getEndpoints } = require("./controllers/topics.controller");
+const {
+  getTopics,
+  getEndpoints,
+  postTopics,
+} = require("./controllers/topics.controller");
 
 const {
   getArticleById,
@@ -45,6 +49,8 @@ app.patch("/api/comments/:comment_id", patchCommentsById);
 
 app.post("/api/articles", postArticles);
 
+app.post("/api/topics", postTopics);
+
 app.all(`*`, (req, res) => {
   res.status(404).send({ message: "Endpoint Not Found" });
 });
@@ -63,11 +69,11 @@ app.use((err, req, res, next) => {
       res.status(404).send({ message: "article_id Does Not Exist" });
     } else if (err.constraint === "comments_author_fkey") {
       res.status(400).send({ message: "Invalid Username" });
-    }else if (err.constraint === "articles_topic_fkey") {
+    } else if (err.constraint === "articles_topic_fkey") {
       res.status(400).send({ message: "Invalid Topic" });
-    }else if (err.constraint === "articles_author_fkey") {
+    } else if (err.constraint === "articles_author_fkey") {
       res.status(400).send({ message: "Invalid Author" });
-    }else(console.log(err))
+    } else console.log(err);
   } else if (err.code === "23502") {
     res.status(400).send({ message: "Missing Required Fields" });
   } else if (err.code === "42601") {

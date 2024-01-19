@@ -2,13 +2,12 @@ const {
   selectArticleById,
   selectArticles,
   updateArticleById,
-  addArticle
+  addArticle,
 } = require("../models/articles.model");
 const { checkTopicExists } = require("./utils/checkTopicExists");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  
 
   selectArticleById(article_id)
     .then((article) => {
@@ -53,4 +52,4 @@ exports.postArticles = (req, res, next) => {
       res.status(201).send({ article });
     })
     .catch(next);
-  }
+};

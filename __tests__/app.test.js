@@ -29,6 +29,50 @@ describe("/api/topics", () => {
         });
       });
   });
+  test("POST 201: should post new topic with slug and description ans return the posted topic", () => {
+    const newTopic = {
+      slug: "topic name",
+      description: "description",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.topic).toMatchObject({
+          slug: "topic name",
+          description: "description",
+        });
+      });
+  });
+
+  test("POST 201: should post new topic with slug only and return the posted topic", () => {
+    const newTopic = {
+      slug: "topic name",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.topic).toMatchObject({
+          slug: "topic name",
+        });
+      });
+  });
+
+  test("POST 400: should return 400 status code and error message when post request is missing required fields - slug", () => {
+    const newTopic = {
+      description: "description",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Missing Required Fields");
+      });
+    })
 });
 describe("/api", () => {
   test("GET 404: should return 404 status code and error message when trying to connect to an endpoint that does not exist", () => {
@@ -367,8 +411,6 @@ describe("/api/articles", () => {
         expect(response.body.message).toBe("Invalid order Query");
       });
   });
-  ///////////////////////////
-
   test("POST 201: should post article with author, title, body, topic and article_img_url ans return the posted comment", () => {
     const newArticle = {
       title: "Living in the shadow of a great man",
@@ -403,7 +445,7 @@ describe("/api/articles", () => {
       title: "Living in the shadow of a great man",
       topic: "mitch",
       author: "butter_bridge",
-      body: "I find this existence challenging"
+      body: "I find this existence challenging",
     };
     return request(app)
       .post("/api/articles")
@@ -415,7 +457,8 @@ describe("/api/articles", () => {
           topic: "mitch",
           author: "butter_bridge",
           body: "I find this existence challenging",
-          article_img_url:"https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          article_img_url:
+            "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
           created_at: expect.any(String),
           votes: 0,
           article_id: expect.any(Number),
@@ -425,11 +468,11 @@ describe("/api/articles", () => {
   });
 
   test("POST 400: should return 400 status code and error message when given an invalid author", () => {
-     const newArticle = {
+    const newArticle = {
       title: "Living in the shadow of a great man",
       topic: "mitch",
       author: "sabreen",
-      body: "I find this existence challenging"
+      body: "I find this existence challenging",
     };
     return request(app)
       .post("/api/articles")
@@ -442,25 +485,25 @@ describe("/api/articles", () => {
 
   test("POST 400: should return 400 status code and error message when given an invalid topic", () => {
     const newArticle = {
-     title: "Living in the shadow of a great man",
-     topic: "sabreen",
-     author: "butter_bridge",
-     body: "I find this existence challenging"
-   };
-   return request(app)
-     .post("/api/articles")
-     .send(newArticle)
-     .expect(400)
-     .then((response) => {
-       expect(response.body.message).toBe("Invalid Topic");
-     });
- });
+      title: "Living in the shadow of a great man",
+      topic: "sabreen",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid Topic");
+      });
+  });
 
   test("POST 400: should return 400 status code and error message when post request is missing required fields - author", () => {
     const newArticle = {
       title: "Living in the shadow of a great man",
       topic: "mitch",
-      body: "I find this existence challenging"
+      body: "I find this existence challenging",
     };
     return request(app)
       .post("/api/articles")
@@ -490,7 +533,7 @@ describe("/api/articles", () => {
     const newArticle = {
       topic: "mitch",
       author: "butter_bridge",
-      body: "I find this existence challenging"
+      body: "I find this existence challenging",
     };
     return request(app)
       .post("/api/articles")
@@ -505,7 +548,7 @@ describe("/api/articles", () => {
     const newArticle = {
       title: "Living in the shadow of a great man",
       author: "butter_bridge",
-      body: "I find this existence challenging"
+      body: "I find this existence challenging",
     };
     return request(app)
       .post("/api/articles")
@@ -515,7 +558,6 @@ describe("/api/articles", () => {
         expect(response.body.message).toBe("Missing Required Fields");
       });
   });
-
 });
 
 describe("/api/articles/:article_id/comments", () => {
