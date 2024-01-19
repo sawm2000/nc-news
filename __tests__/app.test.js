@@ -289,7 +289,7 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(13);
+        expect(response.body.total_count).toBe(13);
         response.body.articles.forEach((article) => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
@@ -332,7 +332,7 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(12);
+        expect(response.body.total_count).toBe(12);
         response.body.articles.forEach((article) => {
           expect(article).toMatchObject({
             topic: "mitch",
@@ -345,7 +345,7 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=paper")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(0);
+        expect(response.body.total_count).toBe(0);
         response.body.articles.forEach((article) => {
           expect(article).toEqual([]);
         });
@@ -366,7 +366,7 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(13);
+        expect(response.body.total_count).toBe(13);
         expect(response.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -377,7 +377,7 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=article_id")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(13);
+        expect(response.body.total_count).toBe(13);
         expect(response.body.articles).toBeSortedBy("article_id", {
           descending: true,
         });
@@ -397,7 +397,7 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=article_id")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(13);
+        expect(response.body.total_count).toBe(13);
         expect(response.body.articles).toBeSortedBy("article_id", {
           descending: true,
         });
@@ -409,7 +409,7 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=article_id&order=ASC")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(13);
+        expect(response.body.total_count).toBe(13);
         expect(response.body.articles).toBeSortedBy("article_id", {
           descending: false,
         });
@@ -420,7 +420,7 @@ describe("/api/articles", () => {
       .get("/api/articles?order=ASC")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(13);
+        expect(response.body.total_count).toBe(13);
         expect(response.body.articles).toBeSortedBy("created_at", {
           descending: false,
         });
@@ -581,7 +581,88 @@ describe("/api/articles", () => {
         expect(response.body.message).toBe("Missing Required Fields");
       });
   });
-});
+  ////////////////
+    test("GET 200: should return an array of article objects - when given page and limit", () => {
+      return request(app)
+        .get("/api/articles?limit=5&page=2")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.articles.length).toBe(5);
+          response.body.articles.forEach((article) => {
+            expect(article).toMatchObject({
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              title: expect.any(String),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(String),
+            });
+          });
+        });
+    });
+    test("GET 200: should return an array of article objects - when given no page and no limit - limit should default to 10", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.articles.length).toBe(10);
+          response.body.articles.forEach((article) => {
+            expect(article).toMatchObject({
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              title: expect.any(String),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(String),
+            });
+          });
+        });
+    });
+  test("GET 200: should return an array of article objects - when given page only", () => {
+    return request(app)
+      .get("/api/articles?page=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(3);
+        response.body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            title: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });  
+  });
+  test("GET 200: should return an array of article objects - when given limit only", () => {
+    return request(app)
+      .get("/api/articles?limit=6")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(6);
+        response.body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            title: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+})
 
 describe("/api/articles/:article_id/comments", () => {
   test("GET 200: should return an array of comments for a given article_id", () => {

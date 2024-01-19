@@ -18,18 +18,30 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sort_by, order } = req.query;
-
+  const { topic, sort_by, order} = req.query;
+  let {limit, page} = req.query
   const queries = [selectArticles(topic, sort_by, order)];
 
   if (topic) {
     const topicExists = checkTopicExists(topic);
     queries.push(topicExists);
   }
+  if(limit === undefined){
+    limit = 10
+  }
+
+  if(page === undefined){
+    page = 1
+  }
+  
   Promise.all(queries)
     .then((response) => {
-      const articles = response[0];
-      res.status(200).send({ articles });
+      const start = (page - 1) * limit
+      const end = page * limit
+
+      const total_count = response[0].length
+      const articles = response[0].slice(start, end);
+      res.status(200).send({ total_count, articles });
     })
     .catch(next);
 };

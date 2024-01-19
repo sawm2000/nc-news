@@ -52,8 +52,10 @@ GROUP BY articles.article_id
 ORDER BY articles.${sort_by} ${order}
 ; `;
 
+
+
   return db.query(queryString, queryParams).then((results) => {
-    return results.rows;
+    return results.rows
   });
 };
 
