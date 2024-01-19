@@ -581,7 +581,6 @@ describe("/api/articles", () => {
         expect(response.body.message).toBe("Missing Required Fields");
       });
   });
-  ////////////////
     test("GET 200: should return an array of article objects - when given page and limit", () => {
       return request(app)
         .get("/api/articles?limit=5&page=2")
@@ -670,7 +669,7 @@ describe("/api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then((response) => {
-        expect(response.body.comments.length).toBe(11);
+        expect(response.body.total_count).toBe(11);
         response.body.comments.forEach((comment) => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
@@ -816,6 +815,79 @@ describe("/api/articles/:article_id/comments", () => {
         expect(response.body.message).toBe("Bad Request");
       });
   });
+  /////////////////
+  test("GET 200: should return an array of comment objects - when given page and limit", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&page=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(5);
+        response.body.comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("GET 200: should return an array of comment objects - when given no page and no limit - limit should default to 10", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(10);
+        response.body.comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+      });
+  });
+test("GET 200: should return an array of comment objects - when given page only", () => {
+  return request(app)
+    .get("/api/articles/1/comments?page=2")
+    .expect(200)
+    .then((response) => {
+      expect(response.body.comments.length).toBe(1);
+      response.body.comments.forEach((comment) => {
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          article_id: expect.any(Number),
+        });
+      });
+    });  
+});
+test("GET 200: should return an array of comment objects - when given limit only", () => {
+  return request(app)
+    .get("/api/articles/1/comments?limit=6")
+    .expect(200)
+    .then((response) => {
+      expect(response.body.comments.length).toBe(6);
+      response.body.comments.forEach((comment) => {
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+        });
+      });
+    });
+});
 });
 
 describe("/api/comments/:comment_id", () => {
