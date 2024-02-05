@@ -35,7 +35,7 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "DESC") => {
     return Promise.reject({ status: 404, message: "Invalid sort_by Query" });
   }
 
-  let queryString = `SELECT articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url ,
+  let queryString = `SELECT articles.article_id, articles.title, articles.author, articles.body, articles.topic, articles.created_at, articles.votes, articles.article_img_url ,
 COUNT(comments.comment_id) AS comment_count
 FROM articles
 LEFT JOIN comments ON articles.article_id = comments.article_id`;
