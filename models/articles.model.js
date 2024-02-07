@@ -48,11 +48,15 @@ LEFT JOIN comments ON articles.article_id = comments.article_id`;
   }
 
   queryString += `
-GROUP BY articles.article_id
-ORDER BY articles.${sort_by} ${order}
-; `;
+GROUP BY articles.article_id`
 
-
+if (sort_by === 'comment_count') {
+  queryString += `
+ORDER BY comment_count ${order};`;
+} else {
+  queryString += `
+ORDER BY articles.${sort_by} ${order};`;
+}
 
   return db.query(queryString, queryParams).then((results) => {
     return results.rows
