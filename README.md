@@ -11,16 +11,16 @@ This project allows users to access a range of endpoints as shown by /api. These
 
 # Setting up 
 
-1. clone the repo
+clone the repo
    https://github.com/sawm2000/nc-news.git
 
-2.
+
 ```bash
 npm install 
 ```
 
-3. setup .env files
-4. 
+setup .env files
+ 
 - Create .env.test file
      add PGDATABASE= nc_news_test
 
@@ -30,7 +30,8 @@ npm install
 - Create .env.production file
      add DATABASE_URL=<your_database_url>
 
-4. seed local database
+
+seed local database
 
 ```bash
 npm run setup-dbs 
@@ -39,7 +40,7 @@ npm run setup-dbs
 npm run seed-prod
 ```
 
-6. run tests
+run tests
 ```bash
  npm run test app.test.js 
 ```
