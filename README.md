@@ -14,7 +14,7 @@ This project allows users to access a range of endpoints as shown by /api. These
 ## clone the repo
    https://github.com/sawm2000/nc-news.git
 
-
+## install Dependencies
 ```bash
 npm install 
 ```
