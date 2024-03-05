@@ -1,17 +1,17 @@
-# Northcoders News API
+## Northcoders News API
 
 
-# Hosted version
+## Hosted version
 
 https://nc-news-c0co.onrender.com
 
-# Summary
+## Summary
 
 This project allows users to access a range of endpoints as shown by /api. These endpoints allow users to view news articles, comments and  user information with various queries available.
 
-# Setting up 
+## Setting up 
 
-clone the repo
+# clone the repo
    https://github.com/sawm2000/nc-news.git
 
 
@@ -19,19 +19,19 @@ clone the repo
 npm install 
 ```
 
-setup .env files
+# setup .env files
  
- Create .env.test file
-     add PGDATABASE= nc_news_test
+# Create .env.test file
+    - add PGDATABASE= nc_news_test
 
-Create .env.development file
-     add PGDATABASE= nc_news
+# Create .env.development file
+    -  add PGDATABASE= nc_news
 
-Create .env.production file
-     add DATABASE_URL=<your_database_url>
+# Create .env.production file
+   - add DATABASE_URL=<your_database_url>
 
 
-seed local database
+# seed local database
 
 ```bash
 npm run setup-dbs 
@@ -40,7 +40,7 @@ npm run setup-dbs
 npm run seed-prod
 ```
 
-run tests
+# run tests
 ```bash
  npm run test app.test.js 
 ```
