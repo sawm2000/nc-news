@@ -22,13 +22,13 @@ npm install
 setup .env files
  
 - Create .env.test file
-     add PGDATABASE= nc_news_test
+     -- add PGDATABASE= nc_news_test
 
 - Create .env.development file
-     add PGDATABASE= nc_news
+     -- add PGDATABASE= nc_news
 
 - Create .env.production file
-     add DATABASE_URL=<your_database_url>
+    -- add DATABASE_URL=<your_database_url>
 
 
 seed local database
