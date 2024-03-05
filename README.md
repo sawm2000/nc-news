@@ -17,22 +17,29 @@ This project allows users to access a range of endpoints as shown by /api. These
 2. npm install 
 
 3. setup .env files
-Create .env.test file
+4. 
+- Create .env.test file
      add PGDATABASE= nc_news_test
 
-Create .env.development file
+- Create .env.development file
      add PGDATABASE= nc_news
 
-Create .env.production file
-     add DATABASE_URL=postgres://qzmhaoee:x7Vp-bMi8VW6cXkt_LuDB_fwJ7-Br08z@rogue.db.elephantsql.com/qzmhaoee
+- Create .env.production file
+     add DATABASE_URL=<your_database_url>
 
-4. seed local database 
- npm run setup-dbs 
- npm run seed-prod
+4. seed local database
 
-5. run tests
-    npm run test app.test.js 
+   ```bash
+npm run setup-dbs 
+```
+  ```bash
+npm run seed-prod
+```
 
+6. run tests
+     ```bash
+ npm run test app.test.js 
+```
 # minimum versions  
   Node.js: v21.2.0
   Postgres: 14.10
