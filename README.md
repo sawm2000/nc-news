@@ -29,15 +29,15 @@ This project allows users to access a range of endpoints as shown by /api. These
 
 4. seed local database
 
-   ```bash
+```bash
 npm run setup-dbs 
 ```
-  ```bash
+```bash
 npm run seed-prod
 ```
 
 6. run tests
-     ```bash
+```bash
  npm run test app.test.js 
 ```
 # minimum versions  
