@@ -1,10 +1,6 @@
 # Northcoders News API
 
 
-# Hosted version
-
-https://nc-news-c0co.onrender.com
-
 # Summary
 
 This project allows users to access a range of endpoints as shown by /api. These endpoints allow users to view news articles, comments and  user information with various queries available.
